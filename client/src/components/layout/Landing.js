@@ -1,14 +1,17 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-export const Landing = () => {
+const Landing = ({ isAuthenticated }) => {
+  if (isAuthenticated) return <Navigate to='dashboard' />;
+
   return (
     <section className="landing">
       <div className="dark-overlay">
         <div className="landing-inner">
-          <h1 className="x-large">Developer Connector</h1>
+          <h1 className="x-large">Devbook</h1>
           <p className="lead">
-            Create a developer profile/portfolio, share posts and get help from
+            Create a developer portfolio, share posts and get help from
             other developers
           </p>
           <div className="buttons">
@@ -19,4 +22,10 @@ export const Landing = () => {
       </div>
     </section>
   )
-}
+};
+
+const mapState = state => ({
+  isAuthenticated: state.auth.isAuthenticated
+});
+
+export default connect(mapState)(Landing);

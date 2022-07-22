@@ -7,6 +7,7 @@ import {
   LOGIN_FAIL,
   LOGOUT,
   ACCOUNT_DELETED,
+  UPDATE_FOLLOWS
 } from '../actions/types';
 
 const initialState = {
@@ -48,6 +49,11 @@ function authReducer(state = initialState, action) {
         isAuthenticated: false,
         loading: false,
         user: null
+      };
+    case UPDATE_FOLLOWS:
+      return {
+        ...state,
+        user: { ...state.user, follows: payload }
       };
     default:
       return state;

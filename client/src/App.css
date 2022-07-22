@@ -139,6 +139,16 @@ img {
   outline: none;
 }
 
+.follow {
+  border-width: 0px;
+  color: #fff;
+  background: var(--primary-color);
+}
+
+.follow:hover {
+  opacity: 0.8;
+}
+
 .badge {
   font-size: 0.8rem;
   padding: 0.1rem;
