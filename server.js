@@ -1,6 +1,6 @@
-import express from 'express';
-import { resolve } from 'path';
-import connectDB from './config/db';
+const express = require('express');
+const path = require('path');
+const connectDB = require('./config/db');
 
 connectDB();
 const app = express();
@@ -16,7 +16,7 @@ app.use('/api/profile', require('./routes/api/profile'));
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('client/build'));
     app.get('*', (req, res) => {
-      res.sendFile(resolve(__dirname, 'client', 'build', 'index.html'));
+      res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
     });
 }
 
