@@ -6,6 +6,7 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const auth = require('../../middleware/auth');
 
 // route    POST api/users
 // descr    reg user
@@ -39,7 +40,8 @@ router.post('/', [
             name,
             email,
             avatar,
-            password
+            password,
+            follows: []
         });
         // encrypt pwd
         const salt = await bcrypt.genSalt(10);
@@ -59,6 +61,44 @@ router.post('/', [
                 res.json({ token });
             }
         );
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// route    PUT api/users/follow/:id
+// descr    follow user
+// access   private
+router.put('/follow/:id', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ errors: [{ msg: 'user not found' }] });
+        const me = await User.findById(req.user.id);
+        if (me.follows.filter(follow => follow.user == req.params.id).length > 0) {
+            return res.status(400).json({ errors: [{ msg: 'user already followed' }] });
+        }
+        me.follows.unshift({ user: req.params.id });
+        await me.save();
+        res.json(me.follows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// route    PUT api/users/unfollow/:id
+// descr    unfollow user
+// access   private
+router.put('/unfollow/:id', auth, async (req, res) => {
+    try {
+        const me = await User.findById(req.user.id);
+        if (me.follows.filter(follow => follow.user == req.params.id).length = 0) {
+            return res.status(400).json({ errors: [{ msg: 'user not followed' }] });
+        }
+        me.follows = me.follows.filter(follow => follow.user != req.params.id);
+        await me.save();
+        res.json(me.follows);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
